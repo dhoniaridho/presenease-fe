@@ -7,6 +7,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
 
 export interface ProvidersProps {
   children: React.ReactNode;
@@ -23,6 +24,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
           <NextThemesProvider {...themeProps}>{children}</NextThemesProvider>
         </GoogleOAuthProvider>
       </NextUIProvider>
+      <Toaster position="top-center" reverseOrder={false} />
     </QueryClientProvider>
   );
 }

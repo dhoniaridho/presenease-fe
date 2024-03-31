@@ -1,30 +1,25 @@
 import { Logo } from "@/components/icons";
-import { Time } from "@/utils/datetime";
-import { For } from "@/utils/for";
-import { If } from "@/utils/if";
 import {
   Button,
   Card,
   CardBody,
   CardHeader,
-  Checkbox,
-  Divider,
 } from "@nextui-org/react";
 import { Chart } from "./_components/chart";
 import { Suspense } from "react";
 import { Task } from "./_components/completed-task";
-import { getDashboardData } from "./_services/getter";
 import { getUser } from "@/app/(auth)/_services/actions";
 
 export default async function Page() {
-  const data = await getDashboardData();
   const user = await getUser();
 
   return (
     <div className="space-y-16">
       <Card className="p-5 bg-gradient-to-tr from-blue-700/80 to-sky-500 backdrop-blur-md text-white">
         <CardHeader className="flex-col items-start">
-          <h4 className="text-2xl font-semibold">Good Morning, {user?.fullName}</h4>
+          <h4 className="text-2xl font-semibold">
+            Good Morning, {user?.data.data?.fullName}
+          </h4>
           <p>Today is a good day</p>
         </CardHeader>
         <CardBody>
@@ -49,7 +44,7 @@ export default async function Page() {
         </CardBody>
       </Card>
       <div className="grid grid-cols-4 gap-3 flex-row bg-none">
-        <For
+        {/* <For
           each={[
             {
               id: 1,
@@ -85,7 +80,7 @@ export default async function Page() {
               <CardBody>{v.unit}</CardBody>
             </Card>
           )}
-        </For>
+        </For> */}
       </div>
       <div className="grid grid-cols-2 gap-5">
         <div>

@@ -2,7 +2,6 @@
 import "@/styles/globals.css";
 import { Logo } from "@/components/icons";
 import {
-  Button,
   Card,
   CardBody,
   Listbox,
@@ -10,68 +9,53 @@ import {
   User,
   Modal,
   ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
   useDisclosure,
 } from "@nextui-org/react";
-import {
-  onCheckin,
-  onCheckout,
-  onComeBack,
-  onLeave,
-} from "./checkins/_services/actions";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getLastCheckin } from "./checkins/_services/getter";
-import { If } from "@/utils/if";
 import { usePathname } from "next/navigation";
-import { Loader } from "@/components/loader";
-import { Input } from "@nextui-org/react";
-import { LoginAction } from "./_components/quick-actions/login-action";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const p = usePathname();
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
-  const { data, refetch, isLoading } = useQuery({
-    queryKey: ["checkin"],
-    queryFn: async () => {
-      return getLastCheckin(p);
-    },
-  });
+  // const { data, refetch, isLoading } = useQuery({
+  //   queryKey: ["checkin"],
+  //   queryFn: async () => {
+  //     return getLastCheckin(p);
+  //   },
+  // });
 
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
-  const { mutate: checkout, isPending: isCheckoutPending } = useMutation({
-    mutationFn: async () => {
-      return onCheckout();
-    },
-    onSuccess: () => {
-      refetch();
-      queryClient.invalidateQueries();
-    },
-  });
+  // const { mutate: checkout, isPending: isCheckoutPending } = useMutation({
+  //   mutationFn: async () => {
+  //     return onCheckout();
+  //   },
+  //   onSuccess: () => {
+  //     refetch();
+  //     queryClient.invalidateQueries();
+  //   },
+  // });
 
-  const { mutate: leave, isPending: isLeavePending } = useMutation({
-    mutationFn: async () => {
-      return onLeave("ngapain ?");
-    },
-    onSuccess: () => {
-      refetch();
-      queryClient.invalidateQueries();
-    },
-  });
+  // const { mutate: leave, isPending: isLeavePending } = useMutation({
+  //   mutationFn: async () => {
+  //     return onLeave("ngapain ?");
+  //   },
+  //   onSuccess: () => {
+  //     refetch();
+  //     queryClient.invalidateQueries();
+  //   },
+  // });
 
-  const { mutate: comeBack, isPending: isBackPending } = useMutation({
-    mutationFn: async () => {
-      return onComeBack();
-    },
-    onSuccess: () => {
-      refetch();
-      queryClient.invalidateQueries();
-    },
-  });
+  // const { mutate: comeBack, isPending: isBackPending } = useMutation({
+  //   mutationFn: async () => {
+  //     return onComeBack();
+  //   },
+  //   onSuccess: () => {
+  //     refetch();
+  //     queryClient.invalidateQueries();
+  //   },
+  // });
 
   return (
     <div className="relative flex h-screen py-5">
@@ -95,7 +79,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </CardBody>
         </Card>
 
-        <Loader isLoading={isLoading}>
+        {/* <Loader>
           <h4>Quick Action</h4>
           <div className="w-full space-y-2">
             <If
@@ -134,7 +118,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               </Button>
             </If>
           </div>
-        </Loader>
+        </Loader> */}
 
         <h4>Master Data</h4>
         <Card className="bg-white mt-5">
@@ -195,7 +179,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         isOpen={isOpen}
         onOpenChange={onOpenChange}
       >
-        <ModalContent>{(onClose) => <LoginAction />}</ModalContent>
+        <ModalContent> f</ModalContent>
       </Modal>
     </div>
   );
