@@ -16,14 +16,13 @@ import {
   Chip,
 } from "@nextui-org/react";
 import { DateTime } from "@/utils/datetime";
-import { getCheckin } from "../_services/getter";
 import { useQuery } from "@tanstack/react-query";
 import { PaginationType } from "@/types/pagination";
-import { If } from "@/utils/if";
 import { Loader } from "@/components/loader";
+import { http } from "@/platform/http/axios";
 
 export function CheckinTable() {
-  const [params, setParams] = useState<PaginationType>({
+  const [params, setParams] = useState({
     page: 1,
     pageSize: 10,
   });
@@ -31,8 +30,7 @@ export function CheckinTable() {
   const { data, isLoading } = useQuery({
     queryKey: ["checkins", params],
     queryFn: async () => {
-      console.log(params);
-      return getCheckin(params);
+      await http.get("/attendances");
     },
   });
 
@@ -61,7 +59,7 @@ export function CheckinTable() {
           <TableColumn>Status</TableColumn>
         </TableHeader>
         <TableBody
-          items={data?.data.data || []}
+          items={data?.data || []}
           emptyContent={isLoading ? " " : "No data"}
           loadingContent={<Loader isLoading={isLoading}>Loading</Loader>}
           isLoading={isLoading}

@@ -12,69 +12,82 @@ import {
   SelectItem,
   Breadcrumbs,
   BreadcrumbItem,
-  Badge,
-  Chip,
+  Button,
 } from "@nextui-org/react";
 import { DateTime } from "@/utils/datetime";
-import { useQuery } from "@tanstack/react-query";
-import { PaginationType } from "@/types/pagination";
-  import { Loader } from "@/components/loader";
-import { getUsers } from "../_services/get";
+import { Loader } from "@/components/loader";
+import { UserListType } from "../_types/list";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { AiOutlineEdit } from "react-icons/ai";
+import { useHttp } from "@/hooks/http";
 
 export function UserTable() {
-  const [params, setParams] = useState<PaginationType>({
+  const router = useRouter();
+  const [params, setParams] = useState({
     page: 1,
     pageSize: 10,
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["checkins", params],
-    queryFn: async () => {
-      return getUsers(params);
-    },
-  });
-
-  const STATUS = {
-    AFK: <Chip color="warning">AFK</Chip>,
-    IN: <Chip color="success">IN</Chip>,
-    LOGOUT: <Chip color="danger">OUT</Chip>,
-  };
+  const { data, isLoading } = useHttp<UserListType>("/users");
 
   return (
     <div>
-      <div className="mb-5">
-        <h3 className="mb-2">
-          <span className="text-3xl font-bold">Checkins</span>
-        </h3>
-        <Breadcrumbs>
-          <BreadcrumbItem>Checkin</BreadcrumbItem>
-          <BreadcrumbItem>List</BreadcrumbItem>
-        </Breadcrumbs>
+      <div className="flex justify-between">
+        <div className="mb-5">
+          <h3 className="mb-2">
+            <span className="text-3xl font-bold">Users</span>
+          </h3>
+          <Breadcrumbs>
+            <BreadcrumbItem>Users</BreadcrumbItem>
+            <BreadcrumbItem>List</BreadcrumbItem>
+          </Breadcrumbs>
+        </div>
+        <div>
+          <Button color="primary" as={Link} href="/users/create">
+            Create
+          </Button>
+        </div>
       </div>
       <Table aria-label="Example static collection table">
         <TableHeader>
           <TableColumn>Name</TableColumn>
           <TableColumn>Email</TableColumn>
-          <TableColumn>Username</TableColumn>
           <TableColumn>Created At</TableColumn>
           <TableColumn>Updated At</TableColumn>
+          <TableColumn>Actions</TableColumn>
         </TableHeader>
         <TableBody
-          items={data?.data.data || []}
+          items={data?.data.data ?? []}
           emptyContent={isLoading ? " " : "No data"}
           loadingContent={<Loader isLoading={isLoading}>Loading</Loader>}
           isLoading={isLoading}
         >
           {(item) => (
-            <TableRow key={item.id}>
+            <TableRow
+              key={item.id}
+              className="cursor-pointer"
+              onClick={() => {
+                router.push(`/users/${item.id}/detail`);
+              }}
+            >
               <TableCell>{item.fullName}</TableCell>
               <TableCell>{item.email}</TableCell>
-              <TableCell>{item.username}</TableCell>
               <TableCell>
-                <DateTime date={item.createdAt}></DateTime>
+                <DateTime date={new Date(item.createdAt)}></DateTime>
               </TableCell>
               <TableCell>
-                <DateTime date={item.updatedAt}></DateTime>
+                <DateTime date={new Date(item.createdAt)}></DateTime>
+              </TableCell>
+              <TableCell>
+                <Button
+                  isIconOnly
+                  onPress={() => {
+                    router.push(`/users/${item.id}/edit`);
+                  }}
+                >
+                  <AiOutlineEdit size={20} />
+                </Button>
               </TableCell>
             </TableRow>
           )}
