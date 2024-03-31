@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Table,
   TableHeader,
@@ -19,8 +19,9 @@ import { Loader } from "@/components/loader";
 import { UserListType } from "../_types/list";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AiOutlineEdit } from "react-icons/ai";
-import { useHttp } from "@/hooks/http";
+import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import { useHttp, useHttpMutation } from "@/hooks/http";
+import toast from "react-hot-toast";
 
 export function UserTable() {
   const router = useRouter();
@@ -28,8 +29,29 @@ export function UserTable() {
     page: 1,
     pageSize: 10,
   });
+  const [selectedId, setSelectedId] = useState<string>();
 
-  const { data, isLoading } = useHttp<UserListType>("/users");
+  const { data, isLoading, refetch } = useHttp<UserListType>("/users");
+  const { mutate, isPending } = useHttpMutation(
+    useMemo(() => `/users/${selectedId}`, [selectedId]),
+    {
+      method: "DELETE",
+      queryOptions: {
+        onSuccess: () => {
+          toast.success("User deleted successfully");
+          setSelectedId(undefined);
+          refetch();
+        },
+        onError: () => {
+          toast.error("Failed to delete user");
+        },
+      },
+    }
+  );
+  const onDelete = (id: string) => {
+    setSelectedId(id);
+    mutate({});
+  };
 
   return (
     <div>
@@ -80,14 +102,23 @@ export function UserTable() {
                 <DateTime date={new Date(item.createdAt)}></DateTime>
               </TableCell>
               <TableCell>
-                <Button
-                  isIconOnly
-                  onPress={() => {
-                    router.push(`/users/${item.id}/edit`);
-                  }}
-                >
-                  <AiOutlineEdit size={20} />
-                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    isIconOnly
+                    onPress={() => {
+                      router.push(`/users/${item.id}/edit`);
+                    }}
+                  >
+                    <AiOutlineEdit size={20} />
+                  </Button>
+                  <Button
+                    isIconOnly
+                    onPress={onDelete.bind(null, item.id)}
+                    isLoading={isPending && selectedId === item.id}
+                  >
+                    <AiOutlineDelete size={20} />
+                  </Button>
+                </div>
               </TableCell>
             </TableRow>
           )}
